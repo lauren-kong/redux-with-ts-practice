@@ -1,26 +1,53 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-
+import React, { useEffect, useRef, useState } from 'react'
+import logo from './logo.svg'
+import './App.css'
+import { useDispatch, useSelector } from 'react-redux'
+import { bindActionCreators } from 'redux'
+import { actionCreators, State } from './state'
 function App() {
+  const dispatch = useDispatch()
+  const { depositMoney, withdrawMoney, bankrupt } = bindActionCreators(actionCreators, dispatch)
+  const amount = useSelector((state: State) => state.bank)
+  const [updateAmount, setUpdateAmount] = useState<string | number>('')
+
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+      <h1>
+        <span>Current Amount: </span>
+        {amount}
+      </h1>
+      <div className="change-amount">
+        <input value={updateAmount} onChange={(e) => setUpdateAmount(e.target.value)} autoFocus />
+        <button
+          className="deposit"
+          onClick={(e) => {
+            depositMoney(Number(updateAmount))
+            setUpdateAmount('')
+          }}
         >
-          Learn React
-        </a>
-      </header>
+          Deposit
+        </button>
+        <button
+          className="withdraw"
+          onClick={() => {
+            withdrawMoney(Number(updateAmount))
+            setUpdateAmount('')
+          }}
+        >
+          Withdraw
+        </button>
+        <button
+          className="bankrupt"
+          onClick={() => {
+            bankrupt()
+            setUpdateAmount('')
+          }}
+        >
+          Bankrupt
+        </button>
+      </div>
     </div>
-  );
+  )
 }
 
-export default App;
+export default App
